@@ -1,0 +1,46 @@
+$primary: #4BDBB3;
+
+.loginPage{
+    width :80%;
+    margin: 0 auto;
+
+}
+
+header{
+    background: $primary;
+    padding: 1em 0;
+
+    a{
+        color: white;
+        text-decoration: none;
+    }
+
+    a.logo {
+        font-weight:bold;
+        font-size: 30px;
+    }
+}
+
+
+.login{
+    margin: 30% auto;
+    text-align: center;
+
+    button{
+        margin: 1em auto;
+        background-color:  #4BDBB3;
+        border: none;
+        text-decoration: none;
+        text-align: center;
+        color:white;
+        padding: 15px 32px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 20px;
+
+        &:hover
+        {
+            background: darken(#4BDBB3, 10%);
+        }
+    }
+}
