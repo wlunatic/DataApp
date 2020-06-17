@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
+import { UserdataService } from '../_services';
+import { ajax, css } from "jquery";
+import * as $ from "jquery";
+// import 'chartjs-plugin-streaming';
+
 
 @Component({
   selector: 'app-overview',
@@ -9,39 +14,149 @@ import { Chart } from 'chart.js';
 export class OverviewComponent implements OnInit {
 
   chart = [];
+  data: any;
 
-  constructor() { }
-  // constructor(private: _overview: OverviewService){}
+  constructor(private _userData: UserdataService) { }
 
   ngOnInit(): void {
+    this.getData();
+  }
 
-    var monthlyChart = new Chart('overviewChart', {
-    type: 'bar',
-    data: {
-        labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June',
-        'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [{
-            label: 'Overview Activities',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: "#43BDE8"
-        }]
-    },
-    options: {
-      legends: {
-        display: false,
-        labels: {
-          display: false
-        }
-      },
-      scales: {
-          yAxes: [{
+  getData(): void {
+
+    var canvas : any = document.getElementById("overviewChart");
+    var ctx = canvas.getContext("2d");
+
+    this._userData.get()
+    .subscribe(res => {
+      
+      let day_data = res.map(res => res.daily);
+      let day_count = day_data[0].map(d => d.user_count);
+      let login_date = day_data[0].map(dl => dl.login_date);
+
+      let month_count = res.map(res => res.user_count);
+      let login_month = res.map(res => res.month);   
+    
+      // console.log(res);
+      // console.log(day_data);
+
+
+      var config = {
+        type: 'bar',
+        data: {
+          labels: login_date,
+          datasets: [
+            {
+              data: day_count,
+              backgroundColor: '#3cba9f',
+              barThickness: 20,
+              fill:false
+            }
+          ]
+        },
+        options: {
+          title: {
+            display: true,
+            text: "User Activities This Month",
+            fontSize: 20
+          },
+          legend: {
+            display: false
+          },
+          scales: {
+            xAxes: [{
+              type: 'time',
+              distribution: 'series',
+              offset: true,
+              time: {
+                unit: 'day'
+              },
+              display: true
+            }],
+            yAxes: [{
+              gridLines: {
+                drawBorder: false
+              },
+              display: true,
               ticks: {
-                  beginAtZero: true
-              }
-          }]
-      }
-    }
-    });
+                beginAtZero: true,
+                min: 0,
+                max: 5,
+                callback: function(value) {if (value % 1 === 0) {return value;}}
+              },
+            }]
+          }
+        }
+      } 
+
+      var overview_chart = new Chart(ctx, config);
+
+      // xAxes: [{
+			// 	type: 'realtime',
+			// 	realtime: {
+			// 		duration: 20000,
+			// 		ttl: 60000,
+			// 		refresh: 1000,
+			// 		delay: 2000,
+			// 		pause: false,
+			// 		onRefresh: onRefresh
+			// 	}
+			// }],
+
+      // $("#today").click(function() {
+      //   var chart_labels = login_time;
+      //   var dataset = time_count;
+      //   var data = overview_chart.config.data;
+      //   data.datasets[0].data = dataset;
+      //   data.datasets[0].barThickness = 40;
+      //   data.datasets[0].fill = true;
+      //   data.labels = chart_labels;
+      //   var time_unit = config.options;
+      //   time_unit.scales.xAxes[0].type = 'realtime';
+      //   time_unit.scales.xAxes[0].realtime.duration = 'realtime';
+
+      //   time_unit.scales.yAxes[0].ticks.max = 5;
+      //   time_unit.title.text = "User Activities Today";
+
+      //   overview_chart.update();
+      // });
+
+      $("#monthly").click(function() {
+        var chart_labels = login_date;
+        var dataset = day_count;
+        var data = overview_chart.config.data;
+        data.datasets[0].data = dataset;
+        data.datasets[0].barThickness = 40;
+        data.labels = chart_labels;
+        var time_unit = config.options;
+        time_unit.scales.xAxes[0].time.unit = 'day';
+        time_unit.scales.yAxes[0].ticks.max = 5;
+        time_unit.title.text = "User Activities This Month";
+
+        overview_chart.update();
+      });
+
+      $("#yearly").click(function() {
+        var chart_labels = login_month;
+        var dataset = month_count;
+        var data = overview_chart.config.data;
+        data.datasets[0].data = dataset;
+        data.datasets[0].barThickness = 100;
+        data.labels = chart_labels;
+        var time_unit = overview_chart.config.options;
+        time_unit.scales.xAxes[0].time.unit = 'month';
+        time_unit.scales.yAxes[0].ticks.max = 15;
+        time_unit.title.text = "User Activities This Year";
+
+
+
+        overview_chart.update();
+      });
+    })
+
+    
+
+    
   }
 
 }

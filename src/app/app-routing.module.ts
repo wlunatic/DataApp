@@ -9,13 +9,12 @@ import { AdminComponent } from './admin/admin.component';
 const routes: Routes = [
 
   //no layout routes
-  { path: 'login', component: LoginComponent},
+  { path: '', component: LoginComponent},
 
   //Site routes goes here 
-  { path: '', component: SiteComponent,},
+  { path: 'site', component: SiteComponent,},
 
-  // App routes goes here here
-
+  // Admin routes goes here here
   { path: 'overview', component: OverviewComponent },
   { path: 'details', component: DetailsComponent },
 

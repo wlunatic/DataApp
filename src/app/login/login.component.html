@@ -9,15 +9,15 @@
     <form [formGroup]="loginForm" class="mx-auto">
         <div class="login-group">
             <label for="username">Username:     </label>
-            <input type = "text" />
+            <input type = "text" formControlName="username" placeholder="Username" required/>
         </div>
 
         <div class="login-group">
             <label for="password">Password:     </label>
-            <input type = "password" />
+            <input type = "password" formControlName="password" placeholder="Password" required/>
         </div>
 
-        <button class="btn-primary btn btn-block">Login</button>
+        <button type="button" class="btn-primary btn btn-block" (click) = "login()">Login</button>
             
     </form>
 </div>
