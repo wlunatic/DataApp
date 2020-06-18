@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Chart, plugins } from 'chart.js';
 import { UserdataService } from '../_services';
 import { ajax, css } from "jquery";
 import * as $ from "jquery";
@@ -71,6 +71,9 @@ export class OverviewComponent implements OnInit {
               time: {
                 unit: 'day'
               },
+              realtime: {
+                refresh: 1000
+              },
               display: true
             }],
             yAxes: [{
@@ -85,23 +88,25 @@ export class OverviewComponent implements OnInit {
                 callback: function(value) {if (value % 1 === 0) {return value;}}
               },
             }]
+          },
+
+          plugins: {
+            streaming: true
           }
         }
       } 
 
       var overview_chart = new Chart(ctx, config);
 
-      // xAxes: [{
-			// 	type: 'realtime',
-			// 	realtime: {
-			// 		duration: 20000,
-			// 		ttl: 60000,
-			// 		refresh: 1000,
-			// 		delay: 2000,
-			// 		pause: false,
-			// 		onRefresh: onRefresh
-			// 	}
-			// }],
+      // var myLineChart = new Chart(ctx).Line(data, options);
+
+      // setInterval(function() {
+      //   setData(data.datasets[0].data);
+      //   setData(data.datasets[1].data);
+      //   setLabels(data.labels);
+    
+      //   var myLineChart = new Chart(ctx).Line(data, options);
+      // }, 2000);
 
       // $("#today").click(function() {
       //   var chart_labels = login_time;
@@ -128,9 +133,22 @@ export class OverviewComponent implements OnInit {
         data.datasets[0].data = dataset;
         data.datasets[0].barThickness = 40;
         data.labels = chart_labels;
+
         var time_unit = config.options;
+        // time_unit.plugins.streaming = false;
+        time_unit.scales.xAxes[0].type = 'time';
         time_unit.scales.xAxes[0].time.unit = 'day';
         time_unit.scales.yAxes[0].ticks.max = 5;
+
+        // time_unit.scales.xAxes[0] = {
+        //   type: 'time',
+        //   distribution: 'series',
+        //   offset: true,
+        //   time: {
+        //     unit: 'day'
+        //   }
+        // };
+        time_unit.plugins.streaming = false;
         time_unit.title.text = "User Activities This Month";
 
         overview_chart.update();
@@ -143,12 +161,24 @@ export class OverviewComponent implements OnInit {
         data.datasets[0].data = dataset;
         data.datasets[0].barThickness = 100;
         data.labels = chart_labels;
+
         var time_unit = overview_chart.config.options;
+        time_unit.plugins.streaming = false;
+        time_unit.scales.xAxes[0].type = 'time';
         time_unit.scales.xAxes[0].time.unit = 'month';
         time_unit.scales.yAxes[0].ticks.max = 15;
         time_unit.title.text = "User Activities This Year";
+        time_unit.plugins.streaming = false;
+        // time_unit.plugins.streaming.pause = true;
 
-
+        // time_unit.scales.xAxes[0] = {
+        //   type: 'time',
+        //   distribution: 'series',
+        //   offset: true,
+        //   time: {
+        //     unit: 'month'
+        //   }
+        // };
 
         overview_chart.update();
       });
